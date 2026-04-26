@@ -1,0 +1,3 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #f2f2f2; color: #1c1c1c; }
+::-webkit-scrollbar { display: none; }
