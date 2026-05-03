@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
-import MenuPage from './components/MenuPage'
-import AdminPage from './components/AdminPage'
+import MenuPage from './src/components/MenuPage'
+import AdminPage from './src/components/AdminPage'
 
 export default function App() {
   return (
