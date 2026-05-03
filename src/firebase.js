@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBzgoVi3J0KfgjyhXXXXXXXXXXXXXXXXX",
+  apiKey: "AIzaSyBzgoVi3J0Kfgjyh6SH8dpu289hU-TJwt8",
   authDomain: "digital-menu-012.firebaseapp.com",
   projectId: "digital-menu-012",
   storageBucket: "digital-menu-012.firebasestorage.app",
