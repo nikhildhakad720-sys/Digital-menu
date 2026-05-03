@@ -59,62 +59,42 @@ export default function AdminPage() {
   }, [user])
 
   const showToast = msg => { setToast(msg); setTimeout(() => setToast(''), 2500) }
-
   const login = async () => {
     if (!email || !password) { setLoginError('Please fill in both fields.'); return }
     setLoggingIn(true); setLoginError('')
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-    } catch (e) {
-      setLoginError('Incorrect email or password.')
-    }
+    try { await signInWithEmailAndPassword(auth, email, password) }
+    catch (e) { setLoginError('Incorrect email or password.') }
     setLoggingIn(false)
   }
-
   const logout = async () => { await signOut(auth); navigate('/') }
-
   const sendReset = async () => {
-    try {
-      await sendPasswordResetEmail(auth, user.email)
-      setResetSent(true)
-      showToast('Reset link sent to ' + user.email)
-    } catch (e) { showToast('Error sending email. Try again.') }
+    try { await sendPasswordResetEmail(auth, user.email); setResetSent(true); showToast('Reset link sent!') }
+    catch (e) { showToast('Error sending email.') }
   }
-
   const saveBanner = async () => {
     const data = { ...special, tag: bannerTag, title: bannerTitle, sub: bannerSub, color: selectedColor }
     await setDoc(doc(db, 'settings', 'special'), data)
-    setSpecial(data)
-    showToast('Banner updated!')
+    setSpecial(data); showToast('Banner updated!')
   }
-
   const applyFeaturedDish = async () => {
     const dishId = document.getElementById('dishPicker').value
     if (!dishId) { showToast('Please select a dish first'); return }
     const data = { ...special, dishId }
     await setDoc(doc(db, 'settings', 'special'), data)
-    setSpecial(data)
-    showToast('Featured dish updated!')
+    setSpecial(data); showToast('Featured dish updated!')
   }
-
   const toggleShowDish = async () => {
     const data = { ...special, showDish: !special.showDish }
     await setDoc(doc(db, 'settings', 'special'), data)
     setSpecial(data)
   }
-
   const addItem = async () => {
     if (!fName || !fPrice) { showToast('Please fill name and price'); return }
     await addDoc(collection(db, 'menuItems'), { name: fName, desc: fDesc, price: parseInt(fPrice), cat: fCat, type: fType, best: fBest, photo: fPhoto || null })
     setFName(''); setFDesc(''); setFPrice(''); setFPhoto(''); setFBest(false)
     showToast('Item added!')
   }
-
-  const deleteItem = async id => {
-    await deleteDoc(doc(db, 'menuItems', id))
-    showToast('Item removed')
-  }
-
+  const deleteItem = async id => { await deleteDoc(doc(db, 'menuItems', id)); showToast('Item removed') }
   const handlePhotoUpload = e => {
     const file = e.target.files[0]; if (!file) return
     const reader = new FileReader()
@@ -134,19 +114,19 @@ export default function AdminPage() {
         <div style={{ fontSize: 13, color: '#93959f', textAlign: 'center', marginBottom: 24 }}>Enter your credentials to continue</div>
         <div style={{ marginBottom: 14 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#686b78', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Gmail</label>
-          <input value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && document.getElementById('passInput').focus()} type="email" placeholder="admin@gmail.com" style={{ width: '100%', padding: '11px 14px', border: '1.5px solid #d4d5d9', borderRadius: 10, fontSize: 14, outline: 'none', fontFamily: 'inherit' }} />
+          <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="admin@gmail.com" style={{ width: '100%', padding: '11px 14px', border: '1.5px solid #d4d5d9', borderRadius: 10, fontSize: 14, outline: 'none', fontFamily: 'inherit' }} />
         </div>
         <div style={{ marginBottom: 14 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#686b78', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
           <div style={{ position: 'relative' }}>
-            <input id="passInput" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} type={showPass ? 'text' : 'password'} placeholder="Enter password" style={{ width: '100%', padding: '11px 40px 11px 14px', border: '1.5px solid #d4d5d9', borderRadius: 10, fontSize: 14, outline: 'none', fontFamily: 'inherit' }} />
+            <input value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} type={showPass ? 'text' : 'password'} placeholder="Enter password" style={{ width: '100%', padding: '11px 40px 11px 14px', border: '1.5px solid #d4d5d9', borderRadius: 10, fontSize: 14, outline: 'none', fontFamily: 'inherit' }} />
             <button onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer' }}>{showPass ? '🙈' : '👁'}</button>
           </div>
         </div>
         {loginError && <div style={{ fontSize: 12, color: '#e23744', textAlign: 'center', marginBottom: 10, fontWeight: 500 }}>{loginError}</div>}
         <button onClick={login} disabled={loggingIn} style={{ background: '#e23744', color: '#fff', border: 'none', padding: 13, width: '100%', borderRadius: 10, fontSize: 15, fontWeight: 600, cursor: 'pointer', opacity: loggingIn ? 0.7 : 1 }}>{loggingIn ? 'Verifying...' : 'Login to Dashboard'}</button>
         <div style={{ textAlign: 'center', marginTop: 14 }}>
-          <span onClick={() => { if (!email) { setLoginError('Enter your Gmail above first.'); return } sendPasswordResetEmail(auth, email).then(() => showToast('Check your Gmail for reset link!')).catch(() => setLoginError('Something went wrong.')) }} style={{ fontSize: 13, color: '#e23744', cursor: 'pointer', textDecoration: 'underline' }}>Forgot password? Reset via Gmail</span>
+          <span onClick={() => { if (!email) { setLoginError('Enter your Gmail above first.'); return } sendPasswordResetEmail(auth, email).then(() => showToast('Check your Gmail!')).catch(() => setLoginError('Something went wrong.')) }} style={{ fontSize: 13, color: '#e23744', cursor: 'pointer', textDecoration: 'underline' }}>Forgot password? Reset via Gmail</span>
         </div>
         <div style={{ textAlign: 'center', marginTop: 8 }}>
           <span onClick={() => navigate('/')} style={{ fontSize: 13, color: '#93959f', cursor: 'pointer' }}>← Back to Menu</span>
@@ -165,7 +145,6 @@ export default function AdminPage() {
           <button onClick={logout} style={{ background: '#e23744', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Logout</button>
         </div>
       </div>
-
       <div style={{ padding: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
           <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#e23744', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>A</div>
@@ -175,19 +154,17 @@ export default function AdminPage() {
           </div>
           <button onClick={sendReset} style={{ background: 'none', border: '1px solid #d4d5d9', borderRadius: 8, padding: '5px 10px', fontSize: 11, color: '#686b78', cursor: 'pointer' }}>Reset Password</button>
         </div>
-        {resetSent && <div style={{ background: '#e8f4e8', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 12, color: '#2d7a35', fontWeight: 500 }}>✅ Reset link sent to your Gmail! Check your inbox.</div>}
-
+        {resetSent && <div style={{ background: '#e8f4e8', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 12, color: '#2d7a35', fontWeight: 500 }}>✅ Reset link sent! Check your Gmail inbox.</div>}
         <div style={{ display: 'flex', background: '#fff', borderRadius: 10, padding: 4, marginBottom: 16 }}>
           {[['special', "⭐ Today's Special"], ['menu', '🍽️ Menu Items']].map(([key, label]) => (
             <div key={key} onClick={() => setActiveTab(key)} style={{ flex: 1, padding: '9px 0', textAlign: 'center', fontSize: 13, fontWeight: 600, borderRadius: 8, cursor: 'pointer', background: activeTab === key ? '#e23744' : 'transparent', color: activeTab === key ? '#fff' : '#686b78', transition: 'all 0.15s' }}>{label}</div>
           ))}
         </div>
-
         {activeTab === 'special' && (
           <>
             <div style={{ background: '#fff', borderRadius: 12, padding: 16, marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: '#e23744', marginBottom: 14 }}>✏️ Banner Editor</div>
-              {[['Banner Tag', bannerTag, setBannerTag, 'e.g. Today\'s Special'], ['Banner Title', bannerTitle, setBannerTitle, 'e.g. Chef\'s Picks Are Here!'], ['Banner Subtitle', bannerSub, setBannerSub, 'e.g. Table service · Scan & browse']].map(([label, val, setter, ph]) => (
+              {[['Banner Tag', bannerTag, setBannerTag, "Today's Special"], ['Banner Title', bannerTitle, setBannerTitle, "Chef's Picks Are Here!"], ['Banner Subtitle', bannerSub, setBannerSub, "Table service · Scan & browse"]].map(([label, val, setter, ph]) => (
                 <div key={label} style={{ marginBottom: 10 }}>
                   <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#686b78', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</label>
                   <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #d4d5d9', borderRadius: 8, fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
@@ -209,7 +186,6 @@ export default function AdminPage() {
               </div>
               <button onClick={saveBanner} style={{ background: '#e23744', color: '#fff', border: 'none', padding: 11, width: '100%', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Apply to Menu Banner</button>
             </div>
-
             <div style={{ background: '#fff', borderRadius: 12, padding: 16, marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: '#b8860b', marginBottom: 12 }}>⭐ Feature a Dish</div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 12, borderBottom: '1px solid #f2f2f2', marginBottom: 12 }}>
@@ -232,7 +208,6 @@ export default function AdminPage() {
             </div>
           </>
         )}
-
         {activeTab === 'menu' && (
           <>
             <div style={{ background: '#fff', borderRadius: 12, padding: 16, marginBottom: 16 }}>
@@ -270,7 +245,6 @@ export default function AdminPage() {
               </div>
               <button onClick={addItem} style={{ background: '#e23744', color: '#fff', border: 'none', padding: 12, width: '100%', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Add to Menu</button>
             </div>
-
             <div style={{ background: '#fff', borderRadius: 12, padding: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#686b78', marginBottom: 8 }}>All items ({menuItems.length})</div>
               {menuItems.length === 0 && <div style={{ fontSize: 13, color: '#93959f', textAlign: 'center', padding: '20px 0' }}>No items yet. Add your first item above.</div>}

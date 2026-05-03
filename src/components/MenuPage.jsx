@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { db } from '../firebase'
 import { collection, onSnapshot, doc } from 'firebase/firestore'
-import { useNavigate } from 'react-router-dom'
 
 const UNSPLASH_KEY = '_olt2HdCKmk_lyFGPpMoT8b7bPdwDwxeG9gLFVi8nRw'
 const photoCache = {}
@@ -63,7 +62,6 @@ export default function MenuPage() {
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search from our menu..." style={{ border: 'none', background: 'none', fontSize: 14, color: '#1c1c1c', outline: 'none', flex: 1 }} />
         </div>
       </div>
-
       <div style={{ background: special.color, padding: '18px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, transition: 'background 0.4s' }}>
         <div>
           <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase', marginBottom: 4 }}>{special.tag}</div>
@@ -77,7 +75,6 @@ export default function MenuPage() {
           }
         </div>
       </div>
-
       {featuredDish && (
         <div style={{ margin: '0 12px 8px', borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}>
           {(featuredDish.photo || photos[featuredDish.id]) && <img src={featuredDish.photo || photos[featuredDish.id]} alt={featuredDish.name} style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }} />}
@@ -91,7 +88,6 @@ export default function MenuPage() {
           </div>
         </div>
       )}
-
       <div style={{ background: '#fff', margin: '0 0 8px', padding: '14px 16px', display: 'flex', gap: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#93959f" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -108,22 +104,18 @@ export default function MenuPage() {
           <span style={{ fontSize: 12, color: '#686b78' }}><strong>Dine-in</strong> only</span>
         </div>
       </div>
-
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#fff', borderBottom: '1px solid #f2f2f2' }}>
         <div onClick={() => setVegOnly(!vegOnly)} style={{ width: 36, height: 20, borderRadius: 10, background: vegOnly ? '#3d9142' : '#d4d5d9', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}>
           <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', position: 'absolute', top: 2, left: vegOnly ? 18 : 2, transition: 'left 0.2s' }} />
         </div>
         <span style={{ fontSize: 13, fontWeight: 500 }}>Veg only</span>
       </div>
-
       <div style={{ padding: '10px 16px 8px', display: 'flex', gap: 8, overflowX: 'auto', background: '#fff', scrollbarWidth: 'none' }}>
         {categories.map(c => (
           <div key={c} onClick={() => setActiveCategory(c)} style={{ padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', cursor: 'pointer', border: `1.5px solid ${activeCategory === c ? '#e23744' : '#d4d5d9'}`, background: activeCategory === c ? '#e23744' : '#fff', color: activeCategory === c ? '#fff' : '#686b78', transition: 'all 0.15s' }}>{c}</div>
         ))}
       </div>
-
       <div style={{ height: 8, background: '#f2f2f2' }} />
-
       {catGroups.length === 0
         ? <div style={{ padding: '40px 16px', textAlign: 'center', color: '#93959f', fontSize: 14 }}>No items found</div>
         : catGroups.map((cat, ci) => (
@@ -158,7 +150,6 @@ export default function MenuPage() {
           </div>
         ))
       }
-
       <div style={{ height: 8, background: '#f2f2f2' }} />
       <button onClick={() => navigate('/admin')} style={{ background: '#1c1c1c', color: '#fff', border: 'none', padding: '12px 16px', width: '100%', fontSize: 14, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
